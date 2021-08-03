@@ -1,4 +1,4 @@
-package com.example.favdish_completeandroidjetpack.ui.dashboard
+package com.example.favdish_completeandroidjetpack.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

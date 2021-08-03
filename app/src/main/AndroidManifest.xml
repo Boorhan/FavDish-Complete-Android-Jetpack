@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.favdish_completeandroidjetpack">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,21 +13,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FavDishCompleteAndroidJetpack">
         <activity
-            android:name=".SplashActivity"
+            android:name=".view.activities.AddUpdateDishActivity"
             android:exported="true"
-            android:theme="@style/Theme.FavDishCompleteAndroidJetpack.NoActionBar"
-            >
+            android:label="Add Dish"
+            android:theme="@style/Theme.FavDishCompleteAndroidJetpack.NoActionBar"/>
+        <activity
+            android:name=".view.activities.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.FavDishCompleteAndroidJetpack.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name=".MainActivity"
+            android:name=".view.activities.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name" />
     </application>
 
 </manifest>
