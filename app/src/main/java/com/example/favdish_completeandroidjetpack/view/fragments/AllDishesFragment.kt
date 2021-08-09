@@ -2,24 +2,36 @@ package com.example.favdish_completeandroidjetpack.view.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.favdish_completeandroidjetpack.R
+import com.example.favdish_completeandroidjetpack.application.FavDishApplication
 import com.example.favdish_completeandroidjetpack.databinding.FragmentAllDishesBinding
 import com.example.favdish_completeandroidjetpack.view.activities.AddUpdateDishActivity
+import com.example.favdish_completeandroidjetpack.view.adapters.AllDishesAdapter
+import com.example.favdish_completeandroidjetpack.viewmodel.FavDishViewModel
+import com.example.favdish_completeandroidjetpack.viewmodel.FavDishViewModelFactory
 import com.example.favdish_completeandroidjetpack.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var mBinding: FragmentAllDishesBinding
     private var _binding: FragmentAllDishesBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val mFavDishViewModel: FavDishViewModel by viewModels {
+        FavDishViewModelFactory((requireActivity().application as FavDishApplication).repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +43,37 @@ class AllDishesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        mBinding = FragmentAllDishesBinding.inflate(inflater,container,false)
+        return mBinding.root
+    }
 
-        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        /**
+         * Add an observer on the LiveData returned by getAllDishesList.
+         * The onChanged() method fires when the observed data changes and the activity is in the foreground.
+         */
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+        mBinding.rvDishesList.layoutManager = GridLayoutManager(requireContext(),2)
+
+        val allDishedAdapter = AllDishesAdapter(this@AllDishesFragment)
+        mBinding.rvDishesList.adapter = allDishedAdapter
+
+        mFavDishViewModel.allDishesList.observe(viewLifecycleOwner) { dishes ->
+            dishes.let {
+                if(it.isNotEmpty()){
+                    mBinding.rvDishesList.visibility = View.VISIBLE
+                    mBinding.tvNoDishesAddedYet.visibility = View.GONE
+
+                    allDishedAdapter.dishesList(it)
+
+                }else{
+                    mBinding.rvDishesList.visibility = View.GONE
+                    mBinding.tvNoDishesAddedYet.visibility = View.VISIBLE
+
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
